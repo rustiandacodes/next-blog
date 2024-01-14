@@ -1,4 +1,4 @@
-import Oauth from '@/commponents/Oauth';
+import Oauth from '@/components/Oauth';
 import Link from 'next/link';
 
 const Login = () => {
