@@ -3,20 +3,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import profile from '../assets/profile.png';
 import { useRef, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 const Navbar = () => {
   const [searchBar, setSearchBar] = useState(false);
+  const [menuBar, setMenuBar] = useState(false);
+  const refSearchBar = useRef(null);
+  const refMenuBar = useRef(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     document.addEventListener('click', handleOutsideClick, true);
     window.addEventListener('keydown', handleEscape);
   }, []);
 
-  const refOne = useRef(null);
+  const handleShowNavbar = () => {
+    if (pathname === '/login' || pathname === '/register' || pathname === '/forget-password' || pathname === '/reset-password') {
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   const handleOutsideClick = (e) => {
-    if (!refOne.current.contains(e.target)) {
+    if (!refSearchBar.current.contains(e.target)) {
       setSearchBar(false);
+    }
+    if (!refMenuBar.current.contains(e.target)) {
+      setMenuBar(false);
     }
   };
 
@@ -26,14 +42,12 @@ const Navbar = () => {
     }
   };
 
-  console.log(searchBar);
-
   return (
-    <div className="relative w-full shadow py-5 px-5 md:px-0">
+    <div className={`${handleShowNavbar() === true ? 'block' : 'hidden'} md:relative w-full shadow py-5 px-5 md:px-0`}>
       <div className={`${searchBar === true ? 'fixed' : 'hidden'} h-screen bottom-0 left-0 right-0 bg-dark-background/35 z-10 backdrop-blur`}></div>
       {/* search pop up */}
       <div className={` ${searchBar === true ? 'absolute' : 'hidden'} left-0 right-0 md:top-32 top-16 px-5 md:px-0 z-20`}>
-        <div className="lg:w-1/2 md:w-[75%] w-full mx-auto bg-light-container dark:bg-dark-container rounded-lg overflow-hidden shadow" ref={refOne}>
+        <div className="lg:w-1/2 md:w-[75%] w-full mx-auto bg-light-container dark:bg-dark-container rounded-lg overflow-hidden shadow" ref={refSearchBar}>
           {/* search icon */}
           <div className="flex gap-3 justify-between items-center bg-light-background dark:bg-dark-in-container p-3">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -52,6 +66,47 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      {/* pop up menu */}
+      <div
+        className={`${
+          menuBar === true ? 'block' : 'hidden'
+        } md:absolute fixed left-0 right-0 md:right-28 md:left-auto md:top-24 bottom-0 md:bottom-auto px-2 md:rounded-lg rounded-tl-2xl rounded-tr-2xl bg-light-container dark:bg-dark-container shadow`}
+        ref={refMenuBar}
+      >
+        <div className="flex gap-2 items-center p-3 cursor-pointer border-b dark:border-dark-in-container">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          <p>My Profile</p>
+        </div>
+        <div className="flex gap-2 items-center p-3 cursor-pointer border-b dark:border-dark-in-container">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+            />
+          </svg>
+          <p>Write Article</p>
+        </div>
+        <div className="flex gap-2 items-center p-3 cursor-pointer border-b dark:border-dark-in-container">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6"
+            />
+          </svg>
+          <p>Content Manager</p>
+        </div>
+        <div className="flex gap-2 items-center p-3 cursor-pointer mb-1" onClick={() => router.push('/login')}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+          </svg>
+          <p>Log Out</p>
+        </div>
+      </div>
+
       <div className="container mx-auto flex justify-between items-center">
         <Link className="font-bold md:text-2xl text-xl" href={'/'}>
           ✨Blink Media
@@ -59,7 +114,7 @@ const Navbar = () => {
         {/* menu */}
         <div className="flex gap-3 justify-center items-center">
           {/* search icon */}
-          <div className="rounded-full cursor-pointer bg-light-container dark:bg-dark-container p-2 md:p-3" onClick={() => setSearchBar(true)}>
+          <div className="rounded-full cursor-pointer bg-light-container dark:bg-dark-container p-2 md:p-3" onClick={() => setSearchBar(!searchBar)}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="cursor-pointer w-7 h-7">
               <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
@@ -80,7 +135,7 @@ const Navbar = () => {
             </div>
           </div>
           {/* profile picture */}
-          <div className="flex gap-3 justify-center items-center cursor-pointer">
+          <div className="md:relative flex gap-3 justify-center items-center cursor-pointer" onClick={() => setMenuBar(!menuBar)} ref={refMenuBar}>
             <div className="rounded-full overflow-hidden md:w-12 w-11">
               <Image src={profile} />
             </div>
